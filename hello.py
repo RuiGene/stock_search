@@ -6,14 +6,8 @@ import fundamentalanalysis as fa
 from datetime import datetime
 FA_API_KEY = '85fe259a4ec6fad3cbe55a5ddaf7f9b4'
 
-# set title and layout
 st.set_page_config(page_title="Stock searcher", layout="wide")
-# st.title("Stock searcher", anchor=None)
-
-# create 3 columns and add a text_input
-# in the second/center column
 ticker = st.columns(4)[0].text_input("Ticker")
-# col1, col2, col3, ticker  = st.columns(4)
 
 TIME_DIFFS = {
     "1 week": pd.DateOffset(weeks=1),
@@ -61,9 +55,6 @@ if ticker != "":
 info = stock_data["info"]
 currency = info["currency"]
 
-
-st.title(f"{info['companyName']} ({info['symbol']})")
-
 # Add changes for different periods
 close = stock_data["stock_closings"]
 latest_price = close.iloc[-1]
@@ -86,16 +77,8 @@ for i, (name, difference) in enumerate(TIME_DIFFS.items()):
     # color can be displayed as :red[this will be red] in markdown
     change_columns[i].markdown(f"{name}: :{color}[{round(change, 2)}%]")
 
-# here I set different widths to each column,
-# meaning the first is 1 width and the second 3,
-# i.e. 1/(1+3) = 25% and 3 / (1+4) = 75%
 overview_columns = st.columns([1, 3])
 
-# first column, basic information
-
-# The <br/> tag in html simple adds a linebreak.
-# I add 4 of those to lower the text to become more
-# vertically aligned
 overview_columns[0].markdown("<br/>"*4, unsafe_allow_html=True)
 # text will be displayed and key is the key in info
 for text, key in [
@@ -109,20 +92,7 @@ for text, key in [
     overview_columns[0].markdown("")
     overview_columns[0].markdown(f"- {text}: **{info[key]}**")
 
-    # second column, graph and graph settings
-
-# empty() functions as a placeholder,
-# that is, after I later add items to this placeholder,
-# the items will appear here before elements that are
-# added later. 
 graph_placeholder = overview_columns[1].empty()
-# The reason a placeholder is used is because I would like
-# to show the graph options beneath the graph, but they
-# need to be set first so that their returned values can
-# be used when constructing the graph
-
-# here I add an empty graph to avoid the elements from
-# jumping around when updating the graph
 graph_placeholder.plotly_chart(go.Figure(), use_container_width=True)
 
 # options that will dictate the graph:
@@ -137,7 +107,7 @@ moving_average = overview_columns[1].slider("Moving average", min_value=2, max_v
 
 # Use above to construct the graph:
 
-def get_price_data_fig(srs, moving_average, time_window, time_window_key, currency):
+def get_price_data_fig(srs, moving_average, time_window, currency):
     # create moving average
     ma = srs.rolling(window=moving_average).mean().dropna()
     # only in time window
@@ -152,7 +122,6 @@ def get_price_data_fig(srs, moving_average, time_window, time_window_key, curren
     # combine and add layout
     fig = go.Figure(data = fig1.data + fig2.data)
     fig.update_layout(
-        title=f"Price data last {time_window_key}",
         xaxis_title="Date",
         yaxis_title=currency,
         title_x = 0.5,
@@ -166,5 +135,3 @@ def get_price_data_fig(srs, moving_average, time_window, time_window_key, curren
 fig = get_price_data_fig(stock_data["stock_closings"], moving_average, time_window, time_window_key, currency)
 # add to placeholder to be displayed before options
 graph_placeholder.plotly_chart(fig, use_container_width=True)
-
-
