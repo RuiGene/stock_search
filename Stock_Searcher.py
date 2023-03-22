@@ -158,4 +158,3 @@ else:
         fig = go.Figure(go.Bar(x = payout.index, y = payout))
         fig.update_layout(xaxis_title = 'Date', yaxis_title = 'Payout ($)', title = {"text": "Dividend History", "x": 0.5, "xanchor": 'center'})
         st.plotly_chart(fig, use_container_width = True)
-
