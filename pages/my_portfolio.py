@@ -14,8 +14,6 @@ API_KEY = '85fe259a4ec6fad3cbe55a5ddaf7f9b4'
 
 st.set_page_config(page_title="Stocks", layout = "wide")
 
-st.title("My Portfolio")
-
 tickers = ["VOO", "VOO", "SCHB", "VOOV", "SCHD", "KO", "TSLA"]
 shares = [2.499, 3, 21.185, 6.961, 13.1406, 8.437, 2.4786]
 date_purchased = ['2022-08-03', '2022-09-07', '2022-11-16', '2022-12-07', '2023-01-24', '2023-03-07',
@@ -42,14 +40,14 @@ def portfolio(tickers, shares, date_purchased):
     month_format = DateFormatter('%b %y')
     ax.xaxis.set_major_formatter(month_format)
 
-    ax.set_title('Total Portfolio Value over Time', loc = 'center', fontsize = 20)
     return fig
 
-st.markdown("<h1 style='text-align: center; color: grey;'>Big headline</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: black; font-size: 35px;'>Portfolio Value Over Time</h1>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 graph = portfolio(tickers, shares, date_purchased)
 st.plotly_chart(graph, use_container_width = True)
 
-st.header('Current holdings')
+st.markdown("<h1 style='text-align: center; color: black; font-size: 35px;'>Current Holdings</h1>", unsafe_allow_html=True)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<h3><a style='color:black;' href='https://investor.vanguard.com/investment-products/etfs/profile/voo'>Vanguard S&P 500 ETF</a></h3>", unsafe_allow_html=True)
