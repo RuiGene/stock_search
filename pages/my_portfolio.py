@@ -9,15 +9,17 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import MonthLocator, DateFormatter
+from matplotlib import ticker
 API_KEY = '85fe259a4ec6fad3cbe55a5ddaf7f9b4'
 
 st.set_page_config(page_title="Stocks", layout = "wide")
 
 st.title("My Portfolio")
 
-tickers = ["AAPL", "MSFT", "GOOG"]
-shares = [3, 2, 6]
-date_purchased = ['2020-05-01', '2021-08-01', '2022-11-01']
+tickers = ["VOO", "VOO", "SCHB", "VOOV", "SCHD", "KO", "TSLA"]
+shares = [2.499, 3, 21.185, 6.961, 13.1406, 8.437, 2.4786]
+date_purchased = ['2022-08-03', '2022-09-07', '2022-11-16', '2022-12-07', '2023-01-24', '2023-03-07',
+                  '2023-03-07']
 date_purchased = pd.to_datetime(date_purchased)
 
 def portfolio(tickers, shares, date_purchased):
@@ -43,25 +45,9 @@ def portfolio(tickers, shares, date_purchased):
     ax.set_title('Total Portfolio Value over Time', loc = 'center', fontsize = 20)
     return fig
 
+st.markdown("<h1 style='text-align: center; color: grey;'>Big headline</h1>", unsafe_allow_html=True)
 graph = portfolio(tickers, shares, date_purchased)
 st.plotly_chart(graph, use_container_width = True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 st.header('Current holdings')
 
