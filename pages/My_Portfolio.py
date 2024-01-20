@@ -40,6 +40,9 @@ def portfolio(tickers, shares, date_purchased):
     month_format = DateFormatter('%b %y')
     ax.xaxis.set_major_formatter(month_format)
 
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Portfolio Value ($)')
+
     return fig
 
 st.markdown("<h1 style='text-align: center; color: black; font-size: 35px;'>Portfolio Value Over Time</h1>", unsafe_allow_html=True)
