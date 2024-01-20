@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib.dates import YearLocator, DateFormatter
+import plotly.express as px
 
 tickers = ["AAPL", "MSFT", "AAPL"]
 shares = [3, 2, -6]
@@ -20,10 +21,17 @@ data['total_portfolio_value'] = data.sum(axis=1)
 fig, ax = plt.subplots(figsize=(10, 5)) # set the figsize parameter to increase the width of the plot
 ax.plot(data.index, data['total_portfolio_value'], label='Total Portfolio Value')
 
-# set the x-axis tick locator and formatter to show only the years
-years = YearLocator()
-year_format = DateFormatter('%Y')
-ax.xaxis.set_major_locator(years)
-ax.xaxis.set_major_formatter(year_format)
+# # set the x-axis tick locator and formatter to show only the years
+# years = YearLocator()
+# year_format = DateFormatter('%Y')
+# ax.xaxis.set_major_locator(years)
+# ax.xaxis.set_major_formatter(year_format)
 
+# st.plotly_chart(fig, use_container_width=True)
+    
+# Use Plotly Express to create an interactive line chart
+fig = px.line(data, x=data.index, y='total_portfolio_value', labels={'total_portfolio_value': 'Total Portfolio Value'},
+              title='Total Portfolio Value Over Time')
+
+# Display the chart using st.plotly_chart
 st.plotly_chart(fig, use_container_width=True)
