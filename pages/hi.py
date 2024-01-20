@@ -19,7 +19,7 @@ for i in range(len(tickers)):
 
 data['total_portfolio_value'] = data.sum(axis=1)
 fig, ax = plt.subplots(figsize=(10, 5)) # set the figsize parameter to increase the width of the plot
-ax.plot(data.index, data['total_portfolio_value'], label='Total Portfolio Value')
+# ax.plot(data.index, data['total_portfolio_value'], label='Total Portfolio Value')
 
 # # set the x-axis tick locator and formatter to show only the years
 # years = YearLocator()
