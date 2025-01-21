@@ -13,7 +13,7 @@ import os
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
 
-st.set_page_config(page_title="Stocks", layout = "wide")
+st.set_page_config(page_title="Stock Search", layout = "wide", page_icon = '🔍')
 
 col1, col2, col3, col4  = st.columns([2, 0.1, 0.1, 0.5])
 stock_data = None

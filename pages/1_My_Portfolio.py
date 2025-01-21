@@ -10,9 +10,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import MonthLocator, DateFormatter
 from matplotlib import ticker
-API_KEY = '85fe259a4ec6fad3cbe55a5ddaf7f9b4'
+from dotenv import load_dotenv
+import os
 
-st.set_page_config(page_title="Stocks", layout = "wide")
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
+
+st.set_page_config(page_title="Portfolio", layout = "wide", page_icon = '🏦')
 
 tickers = ["VOO", "VOO", "SCHB", "VOOV", "SCHD", "KO", "TSLA"]
 shares = [2.499, 3, 21.185, 6.961, 13.1406, 8.437, 2.4786]
