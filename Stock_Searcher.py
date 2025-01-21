@@ -7,7 +7,11 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import date, timedelta, datetime
-API_KEY = '85fe259a4ec6fad3cbe55a5ddaf7f9b4'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
 
 st.set_page_config(page_title="Stocks", layout = "wide")
 
