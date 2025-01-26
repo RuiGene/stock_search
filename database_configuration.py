@@ -8,20 +8,22 @@ def create_stock_portfolio_database():
         """
         CREATE TABLE IF NOT EXISTS stock_transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT NOT NULL,
+            date DATE NOT NULL,
+            ticker TEXT NOT NULL,
             units REAL NOT NULL,
             price REAL NOT NULL,
-            buy_sell TEXT NOT NULL CHECK (buy_sell IN ('buy', 'sell')),
-            ticker TEXT NOT NULL,
-            total_value REAL NOT NULL,
-            transaction_fee REAL NOT NULL,
-            net_value REAL NOT NULL
+            action TEXT NOT NULL CHECK (action IN ('Buy', 'Sell')),
+            total_value REAL
         )
         """
     )
 
+    # cursor.execute(""" DROP TABLE STOCK_TRANSACTIONS""")
+
     conn.commit()
     conn.close()
+
+    print("Sucess")
 
 def create_watchlist_database():
     conn = sqlite3.connect('watchlist.db')
@@ -44,5 +46,5 @@ def create_watchlist_database():
 
 
 if __name__ == "__main__":
-    # create_stock_portfolio_database()
+    create_stock_portfolio_database()
     # create_watchlist_database()
