@@ -128,17 +128,3 @@ with col2:
     st.write("""**INVESTMENT DATE**<br>January, 2023""", unsafe_allow_html=True)
     st.write("""**TICKER**<br>CEN.NZX""", unsafe_allow_html=True)
     st.write("""**INDUSTRY**<br>Energy""", unsafe_allow_html=True)
-
-
-# Retrieving information via API
-def data(stock_ticker):
-    profile = fa.profile(stock_ticker, API_KEY)
-    prices = fa.stock_data(stock_ticker, period = "5y", interval = "1d")
-    dividends = fa.stock_dividend(stock_ticker, API_KEY)
-    return {
-        "company_info": profile.iloc[:, 0],
-        "close_price": prices["close"].sort_index(),
-        "dividends": dividends
-    }
-
-stock_data = data("VOO")

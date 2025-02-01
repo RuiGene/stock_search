@@ -44,7 +44,24 @@ def create_watchlist_database():
     conn.commit()
     conn.close()
 
+def create_current_holdings():
+    conn = sqlite3.connect('current_holdings.db')
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS CURRENT_HOLDINGS (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ticker TEXT NOT NULL,
+        units REAL NOT NULL
+        )
+        """
+    )
+
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
-    create_stock_portfolio_database()
+    # create_stock_portfolio_database()
     # create_watchlist_database()
+    create_current_holdings()
