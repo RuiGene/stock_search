@@ -58,6 +58,8 @@ def create_current_holdings():
         """
     )
 
+    # cursor.execute(""" DROP TABLE CURRENT_HOLDINGS""")
+
     conn.commit()
     conn.close()
 

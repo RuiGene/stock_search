@@ -8,50 +8,86 @@ from datetime import date, timedelta, datetime
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.dates import MonthLocator, DateFormatter
+from matplotlib.dates import MonthLocator, DateFormatter, YearLocator
 from matplotlib import ticker
 from dotenv import load_dotenv
 import os
+import sqlite3
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
 
 st.set_page_config(page_title="Portfolio", layout = "wide", page_icon = '🏦')
 
-tickers = ["VOO", "VOO", "SCHB", "VOOV", "SCHD", "KO", "TSLA"]
-shares = [2.499, 3, 21.185, 6.961, 13.1406, 8.437, 2.4786]
-date_purchased = ['2022-08-03', '2022-09-07', '2022-11-16', '2022-12-07', '2023-01-24', '2023-03-07',
-                  '2023-03-07']
-date_purchased = pd.to_datetime(date_purchased)
+def portfolio():
+    # Reading in transactional data
+    conn = sqlite3.connect("stock_transactions.db")
+    query = "SELECT * FROM stock_transactions"
+    df = pd.read_sql_query(query, conn)
+    conn.close()
 
-def portfolio(tickers, shares, date_purchased):
-    data = pd.DataFrame()
-    for i in range(len(tickers)):
-        stock = yf.Ticker(tickers[i])
-        stock_data = stock.history(start = date_purchased[i])
-        stock_data[tickers[i]] = stock_data['Close'] * shares[i]
-        data = pd.concat([data, stock_data[tickers[i]]], axis = 1)
+    # Data cleaning
+    df['date'] = pd.to_datetime(df['date'])
+    df["date"] = df["date"].dt.tz_localize("America/New_York")
+
+    current_holdings_shares = []
+    current_holdings = []
+
+    # Initialising dataframe
+    data = pd.DataFrame(columns = ['total_portfolio_value', 'cash_balance'])
+
+    for i in range(len(df)):
+        if df['ticker'][i] not in current_holdings:
+            current_holdings.append(df['ticker'][i])
+            stock = yf.Ticker(df['ticker'][i])
+            stock_data = stock.history(start = df['date'][i])
+            data[df['ticker'][i]] = stock_data['Close'] * df['units'][i]
+        
+        else:
+            stock = yf.Ticker(df['ticker'][i])
+            stock_data = stock.history(start = df['date'][i])
+            temp_data = pd.DataFrame()
+            if df['action'][i] == 'Buy':
+                temp_data[df['ticker'][i]] = stock_data['Close']*df['units'][i]
+            else: 
+                temp_data[df['ticker'][i]] = stock_data['Close']*df['units'][i]*-1
+
+            data = pd.merge(data, temp_data, left_index=True, right_index=True, how="outer", suffixes = ('_df1', '_df2'))
+            data.fillna(0, inplace=True)
+            data[df['ticker'][i]] = data[df['ticker'][i] + '_df1'] + data[df['ticker'][i] + '_df2']
+            data = data.drop(columns = [df['ticker'][i] + '_df1', df['ticker'][i] + '_df2'])
+
+    data.fillna(0, inplace = True)
 
     data['total_portfolio_value'] = data.sum(axis=1)
+
+    # Adding cash balance
+    for i in range(len(df)):
+        cash_to_add = round(df['units'][i] * df['price'][i], 2)
+        if df['action'][i] == 'Sell':
+            cash_to_add = cash_to_add * -1
+        data.loc[data.index >= df['date'][i], "cash_balance"] += cash_to_add
+
     fig, ax = plt.subplots(figsize=(10, 5)) # set the figsize parameter to increase the width of the plot
     ax.plot(data.index, data['total_portfolio_value'], label='Total Portfolio Value')
- 
-    months = MonthLocator(bymonth = [1, 4, 7, 10])
-    month_format = DateFormatter('%b %Y')
-    ax.xaxis.set_major_locator(months)
-    ax.xaxis.set_major_formatter(month_format)
+    ax.plot(data.index, data['cash_balance'], linestyle='--', color='black', label='Cash Balance')
 
-    month_format = DateFormatter('%b %y')
-    ax.xaxis.set_major_formatter(month_format)
+    # set the x-axis tick locator and formatter to show only the years
+    years = YearLocator()
+    year_format = DateFormatter('%Y')
+    ax.xaxis.set_major_locator(years)
+    ax.xaxis.set_major_formatter(year_format)
 
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Portfolio Value ($)')
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Value ($)")
+    ax.set_title("Portfolio Value Over Time")
+    ax.legend()
 
     return fig
 
 st.markdown("<h1 style='text-align: center; color: black; font-size: 35px;'>Portfolio Value Over Time</h1>", unsafe_allow_html=True)
 st.markdown("<hr>", unsafe_allow_html=True)
-graph = portfolio(tickers, shares, date_purchased)
+graph = portfolio()
 st.plotly_chart(graph, use_container_width = True)
 
 st.markdown("<h1 style='text-align: center; color: black; font-size: 35px;'>Current Holdings</h1>", unsafe_allow_html=True)
